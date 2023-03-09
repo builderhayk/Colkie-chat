@@ -1,21 +1,27 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { ConflictException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { user, userDocument } from "../mongodb/mongodb/models/user.schema";
 import { LeanDocument, Model, Types } from "mongoose";
-import { CreateUserDto, LoginUserDto, UserPayload } from "../dtos/user";
+import { CreateUserDto, CreateUserValidationSchema, LoginUserDto, UserPayload } from "../dtos/user";
 import * as bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(user.name) private userModel: Model<userDocument>,
+    private readonly configService: ConfigService
   ) {}
 
-  async create(userDto: CreateUserDto): Promise<userDocument> {
+  async create(userDto: CreateUserValidationSchema): Promise<userDocument> {
+    const existingUser = await this.findOne(userDto.username);
+    if (existingUser) {
+      throw new ConflictException('Username already exists');
+    }
     const createdUser = new this.userModel(userDto);
     const savedUser = await createdUser.save();
-    delete savedUser.password;
+    this.sanitizeUser(savedUser);
     return savedUser;
   }
 
@@ -45,7 +51,7 @@ export class AuthService {
     return this.userModel.findOne({ username });
   }
 
-  async signPayload(payload: {id: Types.ObjectId, username: string}) {
-    return sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
+  async signPayload(payload: { _id: Types.ObjectId, username: string }) {
+    return sign(payload, this.configService.get<string>('SECRET_KEY'), { expiresIn: this.configService.get<string>('EXPIRES_IN') });
   }
 }

@@ -6,20 +6,22 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { MongodbService } from "./mongodb/mongodb/mongodb.service";
 import { Connection } from "mongoose";
 import { user, userSchema } from "./mongodb/mongodb/models/user.schema";
-import { AuthModule } from './auth/auth.module';
 import { AuthService } from "./auth/auth.service";
+import { AuthController } from "./auth/auth.controller";
+import { getConfigs } from "./utils/getConfigs";
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot(getConfigs()),
     MongooseModule.forRootAsync({
       useClass: MongodbService,
       inject: [ConfigService],
     }),
     MongooseModule.forFeature([{ name: user.name, schema: userSchema }]),
-    AuthModule,
+    RoomsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [AppService, Connection, AuthService],
 })
 export class AppModule {
