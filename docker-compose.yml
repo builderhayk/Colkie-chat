@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        NODE_ENV: ${NODE_ENV:-development}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    environment:
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    command: npm run start:prod
+
+  db:
+    image: mongo:4.4
+    volumes:
+      - dbdata:/data/db
+    ports:
+      - '27017:27017'
+
+volumes:
+  dbdata:
