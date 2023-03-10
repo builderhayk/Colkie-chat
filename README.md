@@ -1,78 +1,66 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+##Setting up envs
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
+- create .production.env file from .env.example in configs folder
+- create .development.env file from .env.example in configs folder
+- set up the needed variables
+- 
+## Running the app for production 
 
 ```bash
 # development
-$ npm run start
+$ docker build -t my-app .
 
 # watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ docker-compose up --build
 ```
 
-## Test
 
+## Running the app for development
+
+- if you are running the application for first time you need to run the docker build app command
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# development
+$ docker build -t my-app .
+$ NODE_ENV=development docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+- next times you just need to run
+```bash
+# development
+$ npm run start:development
 ```
 
-## Support
+This is the link for Postman Api's collection
+With some automation to set up the variables for testing api's
+you need to just copy the collection to local machine and add environment variable BASE_URL
+The port for nest application is 3000
+example "BASE_URL=http://127.0.0.1:3000"
+`https://www.postman.com/galactic-firefly-8476/workspace/colkie/overview`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+After registering users and creating rooms,
+you can connect socket client and test it again with the same port
+From Front end you need to add authorization headers when connecting to socket gateway
+{"authorization": "${BEARER_TOKEN}"}
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Back end is subscribing to Messages 
+- joinRoom {"roomId": "${roomId}"}
+- sendMessageToRoom {"message": "${message}", "roomId": "${roomId}"}
+- addMemberToRoom { roomId: "${roomId}"; userId: "${userId}" }
 
-## License
+Also Back end is sending messages that front end need to subscribe
+- newMessage
+- newUserAdded
+- hasBeenAddedToRoom
 
-Nest is [MIT licensed](LICENSE).
 
-## How to run 
+##Notes
 
-- docker build -t my-app .
-- docker-compose up
+Of course this is a test application,
+A lot of things may be written in a better way,
+for example doing requests to database from repositories or
+having additional security checking layer for REFRESH_TOKEN or maybe 
+separated service for Sockets Messages Handlers or 
+for example storing the connected users instances and rooms in Redis or etc.
+
+if you will have issues running the application or you will have questions you can contact me via telegram
+`@dreamchaser1998`

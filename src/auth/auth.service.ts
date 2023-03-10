@@ -43,7 +43,6 @@ export class AuthService {
     if (!user) {
       throw new HttpException("user doesnt exists", HttpStatus.BAD_REQUEST);
     }
-    console.log(UserDTO, password, user, this.configService.get<string>("SECRET_KEY"), this.configService.get<string>("EXPIRES_IN"));
 
     if (await bcrypt.compare(password, user.password)) {
       return this.sanitizeUser(user);
