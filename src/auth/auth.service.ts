@@ -39,7 +39,9 @@ export class AuthService {
 
   async findByLogin(UserDTO: LoginUserDto): Promise<UserPayload> {
     const { username, password } = UserDTO;
-    const user = await this.userModel.findOne({ username }, { password: 1 }).exec();
+    const user = await this.userModel
+      .findOne({ username }, { password: 1 })
+      .exec();
     if (!user) {
       throw new HttpException("user doesnt exists", HttpStatus.BAD_REQUEST);
     }
