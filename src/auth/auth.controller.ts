@@ -12,7 +12,7 @@ import { AuthGuard } from "@nestjs/passport";
 import {
   CreateUserValidationSchema,
   UserLoginValidationSchema,
-} from "../dtos/user";
+} from "../utils/validationSchemas/user.validation.schema";
 
 @Controller("auth")
 export class AuthController {

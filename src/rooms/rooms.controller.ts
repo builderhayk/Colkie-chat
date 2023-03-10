@@ -17,10 +17,10 @@ import { chatDocument } from "../mongodb/models/chat.schema";
 import {
   AddMemberToRoomValidationSchema,
   CreateRoomValidationSchema,
-  GetPaginatedListValidationSchema,
   RoomIdValidationSchema,
-} from "../dtos/room";
-import { CreateMessageValidationSchema } from "../dtos/chat";
+} from "../utils/validationSchemas/rooms.validation.schema";
+import { CreateMessageValidationSchema } from "../utils/validationSchemas/messages.validation.schema";
+import { GetPaginatedListValidationSchema } from "../utils/validationSchemas/paginatedList.validation.schema";
 
 @Controller("rooms")
 export class RoomsController {

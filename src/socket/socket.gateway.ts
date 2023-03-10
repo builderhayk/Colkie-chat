@@ -4,7 +4,8 @@ import {
   OnGatewayConnection,
   WebSocketServer,
   ConnectedSocket,
-  OnGatewayDisconnect, WsException
+  OnGatewayDisconnect,
+  WsException,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { RoomsService } from "../rooms/rooms.service";
@@ -12,7 +13,7 @@ import { ChatService } from "../rooms/chat.service";
 import { AuthService } from "../auth/auth.service";
 import { UseGuards } from "@nestjs/common";
 import { SocketSessionGuard } from "./socket.session.guard";
-import { CreateMessageValidationSchema } from "../dtos/chat";
+import { CreateMessageValidationSchema } from "../utils/validationSchemas/messages.validation.schema";
 import { ObjectId } from "mongoose";
 
 type activeUser = { id: string; username: string; socketConnection: Socket };
@@ -37,7 +38,7 @@ export class WebsocketGateway
     const authToken = client.handshake.headers.authorization;
     if (!authToken) {
       client.disconnect();
-      throw new WsException('Unauthorized');
+      throw new WsException("Unauthorized");
     } else {
       const decodedToken = await this.authService.verifyToken(authToken);
       console.log("Connected", decodedToken);

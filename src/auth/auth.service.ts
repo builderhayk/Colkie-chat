@@ -7,14 +7,11 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { user, userDocument } from "../mongodb/models/user.schema";
 import { LeanDocument, Model, Types } from "mongoose";
-import {
-  CreateUserValidationSchema,
-  LoginUserDto,
-  UserPayload,
-} from "../dtos/user";
+import { CreateUserValidationSchema } from "../utils/validationSchemas/user.validation.schema";
 import * as bcrypt from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import { ConfigService } from "@nestjs/config";
+import { LoginUserDto, UserPayload } from "../dtos/user";
 
 @Injectable()
 export class AuthService {

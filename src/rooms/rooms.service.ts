@@ -10,7 +10,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import {
   AddMemberToRoomValidationSchema,
   CreatorIdValidationSchema,
-} from "../dtos/room";
+} from "../utils/validationSchemas/rooms.validation.schema";
 
 @Injectable()
 export class RoomsService {
@@ -62,7 +62,9 @@ export class RoomsService {
       throw new NotFoundException("Room not found");
     }
     if (room.creator !== creatorId) {
-      throw new ForbiddenException("Only admin of room can add users to room!!");
+      throw new ForbiddenException(
+        "Only admin of room can add users to room!!"
+      );
     }
     room.members = [...new Set([...room.members, userId])];
     await room.save();

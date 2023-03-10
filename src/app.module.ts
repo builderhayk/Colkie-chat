@@ -23,7 +23,7 @@ import { SocketModule } from "./socket/socket.module";
     MongooseModule.forFeature([{ name: user.name, schema: userSchema }]),
     RoomsModule,
     UsersModule,
-    SocketModule
+    SocketModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, Connection, AuthService],

@@ -1,7 +1,7 @@
 import { Controller, Get, Query, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { AuthGuard } from "@nestjs/passport";
-import { GetPaginatedListValidationSchema } from "../dtos/room";
+import { GetPaginatedListValidationSchema } from "../utils/validationSchemas/paginatedList.validation.schema";
 import { PaginatedListResponseData } from "../dtos/shared";
 import { userDocument } from "../mongodb/models/user.schema";
 
