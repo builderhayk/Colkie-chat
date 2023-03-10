@@ -4,20 +4,21 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
 } from "@nestjs/common";
 import { RoomsService } from "./rooms.service";
-import { roomDocument } from "../mongodb/mongodb/models/room.schema";
+import { roomDocument } from "../mongodb/models/room.schema";
 import { AuthGuard } from "@nestjs/passport";
 import { ChatService } from "./chat.service";
-import { chatDocument } from "../mongodb/mongodb/models/chat.schema";
+import { chatDocument } from "../mongodb/models/chat.schema";
 import {
   AddMemberToRoomValidationSchema,
   CreateRoomValidationSchema,
   GetPaginatedListValidationSchema,
-  RoomIdValidationSchema
+  RoomIdValidationSchema,
 } from "../dtos/room";
 import { CreateMessageValidationSchema } from "../dtos/chat";
 
@@ -34,7 +35,11 @@ export class RoomsController {
     @Request() req,
     @Body() body: CreateRoomValidationSchema
   ): Promise<roomDocument> {
-    return this.roomsService.createRoom(req.user._id || req.user.id, req.user._id, body.name);
+    return this.roomsService.createRoom(
+      req.user._id || req.user.id,
+      req.user._id,
+      body.name
+    );
   }
 
   @Get(":roomId")
@@ -45,11 +50,10 @@ export class RoomsController {
     return this.roomsService.getRoom(params.roomId);
   }
 
-  @Get("list")
+  @Get("")
   @UseGuards(AuthGuard("jwt"))
   async getRooms(
-    @Param() req,
-    @Param() param: GetPaginatedListValidationSchema,
+    @Request() req,
     @Query() query: GetPaginatedListValidationSchema
   ): Promise<roomDocument[]> {
     return this.roomsService.getUserRooms(
@@ -86,7 +90,7 @@ export class RoomsController {
     );
   }
 
-  @Post(":roomId/addMember/:userId")
+  @Put(":roomId/addMember/:userId")
   @UseGuards(AuthGuard("jwt"))
   async addMemberToRoom(
     @Request() req,
@@ -95,7 +99,7 @@ export class RoomsController {
     return this.roomsService.addMemberToRoom({
       creatorId: req.user._id,
       userId: param.userId,
-      roomId: param.roomId
+      roomId: param.roomId,
     });
   }
 }

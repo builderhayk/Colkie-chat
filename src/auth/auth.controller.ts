@@ -6,18 +6,17 @@ import {
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { user, userDocument } from "../mongodb/mongodb/models/user.schema";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { userDocument } from "../mongodb/models/user.schema";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
-import { CreateUserValidationSchema, UserLoginValidationSchema } from "../dtos/user";
+import {
+  CreateUserValidationSchema,
+  UserLoginValidationSchema,
+} from "../dtos/user";
 
 @Controller("auth")
 export class AuthController {
-  constructor(
-    private authService: AuthService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Post("login")
   async login(@Body() body: UserLoginValidationSchema) {

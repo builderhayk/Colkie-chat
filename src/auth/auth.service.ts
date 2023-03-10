@@ -1,10 +1,19 @@
-import { ConflictException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { user, userDocument } from "../mongodb/mongodb/models/user.schema";
+import { user, userDocument } from "../mongodb/models/user.schema";
 import { LeanDocument, Model, Types } from "mongoose";
-import { CreateUserDto, CreateUserValidationSchema, LoginUserDto, UserPayload } from "../dtos/user";
+import {
+  CreateUserValidationSchema,
+  LoginUserDto,
+  UserPayload,
+} from "../dtos/user";
 import * as bcrypt from "bcrypt";
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -17,7 +26,7 @@ export class AuthService {
   async create(userDto: CreateUserValidationSchema): Promise<userDocument> {
     const existingUser = await this.findOne(userDto.username);
     if (existingUser) {
-      throw new ConflictException('Username already exists');
+      throw new ConflictException("Username already exists");
     }
     const createdUser = new this.userModel(userDto);
     const savedUser = await createdUser.save();
@@ -25,7 +34,9 @@ export class AuthService {
     return savedUser;
   }
 
-  async findOne(username: string): Promise<LeanDocument<user> & { _id: Types.ObjectId }> {
+  async findOne(
+    username: string
+  ): Promise<LeanDocument<user> & { _id: Types.ObjectId }> {
     return this.userModel.findOne({ username }).exec();
   }
 
@@ -33,17 +44,17 @@ export class AuthService {
     const { username, password } = UserDTO;
     const user = await this.userModel.findOne({ username });
     if (!user) {
-      throw new HttpException('user doesnt exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException("user doesnt exists", HttpStatus.BAD_REQUEST);
     }
     if (await bcrypt.compare(password, user.password)) {
-      return this.sanitizeUser(user)
+      return this.sanitizeUser(user);
     } else {
-      throw new HttpException('invalid credential', HttpStatus.BAD_REQUEST);
+      throw new HttpException("invalid credential", HttpStatus.BAD_REQUEST);
     }
   }
   sanitizeUser(user: userDocument): UserPayload {
     const sanitized = user.toObject();
-    delete sanitized['password'];
+    delete sanitized["password"];
     return sanitized;
   }
   async validateUser(payload: LoginUserDto): Promise<userDocument | undefined> {
@@ -51,7 +62,13 @@ export class AuthService {
     return this.userModel.findOne({ username });
   }
 
-  async signPayload(payload: { _id: Types.ObjectId, username: string }) {
-    return sign(payload, this.configService.get<string>('SECRET_KEY'), { expiresIn: this.configService.get<string>('EXPIRES_IN') });
+  async signPayload(payload: { _id: Types.ObjectId; username: string }) {
+    return sign(payload, this.configService.get<string>("SECRET_KEY"), {
+      expiresIn: this.configService.get<string>("EXPIRES_IN"),
+    });
+  }
+
+  async verifyToken(token: string) {
+    return verify(token, this.configService.get<string>("SECRET_KEY"));
   }
 }

@@ -1,12 +1,12 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
 import { Model, ObjectId } from "mongoose";
-import { room, roomDocument } from "../mongodb/mongodb/models/room.schema";
+import { room, roomDocument } from "../mongodb/models/room.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { user } from "../mongodb/mongodb/models/user.schema";
 import {
   AddMemberToRoomValidationSchema,
   CreatorIdValidationSchema,
@@ -16,13 +16,21 @@ import {
 export class RoomsService {
   constructor(@InjectModel(room.name) private roomModel: Model<roomDocument>) {}
 
-  async createRoom(creatorId: ObjectId, userId: ObjectId, name: string): Promise<roomDocument> {
+  async createRoom(
+    creatorId: ObjectId,
+    userId: ObjectId,
+    name: string
+  ): Promise<roomDocument> {
     const existingRoom = await this.roomModel.findOne({ name });
     if (existingRoom) {
       throw new ConflictException("Room with this name already exists");
     }
 
-    const user = new this.roomModel({ name, members: [userId], creator: creatorId });
+    const user = new this.roomModel({
+      name,
+      members: [userId],
+      creator: creatorId,
+    });
     return user.save();
   }
 
@@ -53,7 +61,10 @@ export class RoomsService {
     if (!room) {
       throw new NotFoundException("Room not found");
     }
-    room.members = [...room.members, userId];
+    if (room.creator !== creatorId) {
+      throw new ForbiddenException("Only admin of room can add users to room!!");
+    }
+    room.members = [...new Set([...room.members, userId])];
     await room.save();
 
     return room.populate("members");
