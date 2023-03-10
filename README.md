@@ -36,7 +36,7 @@ The port for nest application is 3000
 
 `example "BASE_URL=http://127.0.0.1:3000"`
 
-[a link](https://www.postman.com/galactic-firefly-8476/workspace/colkie/overview)
+[Public postman collection](https://www.postman.com/galactic-firefly-8476/workspace/colkie/overview)
 
 
 After registering users and creating rooms,
