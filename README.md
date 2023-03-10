@@ -1,4 +1,4 @@
-##Setting up envs
+## Setting up envs
 
 - create .production.env file from .env.example in configs folder
 - create .development.env file from .env.example in configs folder
@@ -33,8 +33,10 @@ This is the link for Postman Api's collection
 With some automation to set up the variables for testing api's
 you need to just copy the collection to local machine and add environment variable BASE_URL
 The port for nest application is 3000
-example "BASE_URL=http://127.0.0.1:3000"
-`https://www.postman.com/galactic-firefly-8476/workspace/colkie/overview`
+
+`example "BASE_URL=http://127.0.0.1:3000"`
+
+[a link](https://www.postman.com/galactic-firefly-8476/workspace/colkie/overview)
 
 
 After registering users and creating rooms,
@@ -53,7 +55,7 @@ Also Back end is sending messages that front end need to subscribe
 - hasBeenAddedToRoom
 
 
-##Notes
+## Notes
 
 Of course this is a test application,
 A lot of things may be written in a better way,
