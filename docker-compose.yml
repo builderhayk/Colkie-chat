@@ -10,11 +10,8 @@ services:
       - '3000:3000'
     depends_on:
       - db
-    environment:
-      - MONGODB_HOST=${MONGODB_HOST}
-      - MONGODB_PORT=${MONGODB_PORT}
-      - MONGODB_DATABASE=${MONGODB_DATABASE}
-    command: npm run start:prod
+    env_file:
+      - ./configs/.production.env
 
   db:
     image: mongo:4.4

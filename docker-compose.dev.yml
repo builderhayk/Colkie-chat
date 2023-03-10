@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  app:
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - ./configs/.development.env
+    command: npm run start:dev

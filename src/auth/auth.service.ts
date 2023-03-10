@@ -39,10 +39,12 @@ export class AuthService {
 
   async findByLogin(UserDTO: LoginUserDto): Promise<UserPayload> {
     const { username, password } = UserDTO;
-    const user = await this.userModel.findOne({ username });
+    const user = await this.userModel.findOne({ username }, { password: 1 }).exec();
     if (!user) {
       throw new HttpException("user doesnt exists", HttpStatus.BAD_REQUEST);
     }
+    console.log(UserDTO, password, user, this.configService.get<string>("SECRET_KEY"), this.configService.get<string>("EXPIRES_IN"));
+
     if (await bcrypt.compare(password, user.password)) {
       return this.sanitizeUser(user);
     } else {
